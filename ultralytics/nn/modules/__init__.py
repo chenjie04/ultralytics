@@ -103,6 +103,7 @@ from .transformer import (
 )
 
 from .da3net import DA3Block
+from .da3netv2 import DA3Block_v2, AdaConcat
 
 __all__ = (
     "Conv",
@@ -182,4 +183,6 @@ __all__ = (
     "Index",
     "A2C2f",
     "DA3Block",
+    "DA3Block_v2",
+    "AdaConcat",
 )
