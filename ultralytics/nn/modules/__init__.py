@@ -102,6 +102,8 @@ from .transformer import (
     TransformerLayer,
 )
 
+from .da3net import DA3Block
+
 __all__ = (
     "Conv",
     "Conv2",
@@ -179,4 +181,5 @@ __all__ = (
     "TorchVision",
     "Index",
     "A2C2f",
+    "DA3Block",
 )
