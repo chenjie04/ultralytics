@@ -71,7 +71,10 @@ from ultralytics.nn.modules import (
     DA3Block,
     DA3Block_v2,
     AdaConcat,
+<<<<<<< HEAD
     DA3Block_v3,
+=======
+>>>>>>> df3b7fa0f (开发DA3NetV2)
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, LOGGER, YAML, colorstr, emojis
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml

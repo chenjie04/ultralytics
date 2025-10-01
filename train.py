@@ -1,8 +1,12 @@
 from ultralytics import YOLO
 
 # Load a model
+<<<<<<< HEAD
 model = YOLO("yolo115n.yaml")
 # model = YOLO("runs/yolo114_VOC/n2/weights/last.pt")
+=======
+model = YOLO("yolo113n.yaml")
+>>>>>>> df3b7fa0f (开发DA3NetV2)
 
 # Train the model
 train_results = model.train(
@@ -13,8 +17,12 @@ train_results = model.train(
     # data="TrashCAN_material.yaml",
     # data="coco.yaml",
     # data="coco8.yaml",
+<<<<<<< HEAD
     # data="TT100K-2016.yaml",
     epochs=500,  # number of training epochs
+=======
+    epochs=50,  # number of training epochs
+>>>>>>> df3b7fa0f (开发DA3NetV2)
     batch=64,
     imgsz=640,  # training image size
     scale=0.5,  # N:0.5, S:0.9; M:0.9; L:0.9; X:0.9
@@ -23,6 +31,11 @@ train_results = model.train(
     copy_paste=0.1,  # N:0.1, S:0.15; M:0.4; L:0.5; X:0.6
     device=[0, 1],  # device to run on, i.e. device=0 or device=0,1,2,3 or device=cpu
     cache="disk",
+<<<<<<< HEAD
     project="runs/yolo115_VOC",
     name="n_sa_pe"
+=======
+    project="runs/yolo113_VOC",
+    name="n"
+>>>>>>> df3b7fa0f (开发DA3NetV2)
 )
