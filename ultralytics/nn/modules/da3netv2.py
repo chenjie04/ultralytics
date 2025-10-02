@@ -275,7 +275,6 @@ class ChannelPool(nn.Module):
     def forward(self, x):
         return torch.cat( (torch.max(x,1)[0].unsqueeze(1), torch.mean(x,1).unsqueeze(1)), dim=1 )
 
-# v1.0
 class AdaConcat(nn.Module):
     """
     Concatenate a list of tensors along specified dimension in a adaptive manner.
@@ -285,7 +284,7 @@ class AdaConcat(nn.Module):
     """
 
     def __init__(
-        self, channels: list = [512, 256], reduction: int = 4, kernel_size: int=3, dimension: int = 1
+        self, channels: list = [512, 256], reduction: int = 8, dimension: int = 1
     ):
         """
         Initialize Concat module.
@@ -298,20 +297,40 @@ class AdaConcat(nn.Module):
         super().__init__()
         self.channels = channels
         self.reduction = reduction
-        self.kernel_size = kernel_size
         self.d = dimension
 
-
         total_chs = sum(self.channels)
+        self.channels_mixing = nn.ModuleList(
+            [
+                nn.Sequential(
+                    nn.Conv2d(
+                        self.channels[i],
+                        self.channels[i] // self.reduction,
+                        1,
+                        bias=True,
+                    ),
+                    nn.SiLU(inplace=True),
+                    nn.Conv2d(
+                        self.channels[i] // self.reduction,
+                        self.channels[i],
+                        1,
+                        bias=True,
+                    ),
+                )
+                for i in range(len(self.channels))
+            ]
+        )
         self.channel_attn_max = nn.Sequential(
-            Conv(total_chs, total_chs // self.reduction, 1, act=True),
-            Conv(total_chs // self.reduction, total_chs, 1, act=nn.Sigmoid()),
+            nn.Conv2d(total_chs, total_chs // self.reduction, 1, bias=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(total_chs // self.reduction, total_chs, 1, bias=True),
+            nn.Hardsigmoid(),
         )
 
         self.channel_pool = ChannelPool()
-
         self.spatial_attn_max = nn.Sequential(
-            Conv(4, 2, k=self.kernel_size, act=nn.Sigmoid()),
+            nn.Conv2d(4, 2, kernel_size=3, padding=1, bias=True),
+            nn.Hardsigmoid(),
         )
 
     def forward(self, x: list[torch.Tensor]):
@@ -326,10 +345,18 @@ class AdaConcat(nn.Module):
         """
         channel_max_pool = torch.cat(
             [
-                F.max_pool2d(
-                    x[i],
-                    (x[i].size(2), x[i].size(3)),
-                    stride=(x[i].size(2), x[i].size(3)),
+                self.channels_mixing[i](
+                    F.max_pool2d(
+                        x[i],
+                        (x[i].size(2), x[i].size(3)),
+                        stride=(x[i].size(2), x[i].size(3)),
+                    )
+                ) + self.channels_mixing[i](
+                    F.avg_pool2d(
+                        x[i],
+                        (x[i].size(2), x[i].size(3)),
+                        stride=(x[i].size(2), x[i].size(3)),
+                    )
                 )
                 for i in range(len(x))
             ],
@@ -340,16 +367,15 @@ class AdaConcat(nn.Module):
         a1, a2 = torch.split(channel_att_max, self.channels, dim=1)
 
         spatial_max = torch.cat(
-            [
-                self.channel_pool(x[i])
-                for i in range(len(x))
-            ],
+            [self.channel_pool(x[i]) for i in range(len(x))],
             dim=1,
         )
-        
-        spatial_att_max = self.spatial_attn_max(spatial_max)
-        s1, s2 = torch.split(spatial_att_max, [1,1], dim=1)
 
-        out = torch.cat([x[0] * torch.sigmoid(a1*s1), x[1] * torch.sigmoid(a2*s2)], dim=self.d)
+        spatial_att_max = self.spatial_attn_max(spatial_max)
+        s1, s2 = torch.split(spatial_att_max, [1, 1], dim=1)
+
+        out = torch.cat(
+            [x[0] * torch.sigmoid(a1 * s1), x[1] * torch.sigmoid(a2 * s2)], dim=self.d
+        )
 
         return out
