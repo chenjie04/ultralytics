@@ -1,18 +1,19 @@
 from ultralytics import YOLO
 
 # Load a model
-# model = YOLO("yolo114n.yaml")
-model = YOLO("runs/yolo114_VOC/n2/weights/last.pt")
+model = YOLO("yolo114n.yaml")
+# model = YOLO("runs/yolo114_VOC/n2/weights/last.pt")
 
 # Train the model
 train_results = model.train(
-    resume=True,
+    # resume=True,
     data="VOC.yaml",  # path to dataset YAML
     # data="DUO.yaml",
     # data="Brackish.yaml", # 这个数据集需要将下面几个数据增强注释掉
     # data="TrashCAN_material.yaml",
     # data="coco.yaml",
     # data="coco8.yaml",
+    # data="TT100K-2016.yaml",
     epochs=500,  # number of training epochs
     batch=64,
     imgsz=640,  # training image size
