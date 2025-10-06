@@ -3,6 +3,7 @@ from ultralytics import YOLO
 # Load a model
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 model = YOLO("yolo115n.yaml")
 # model = YOLO("runs/yolo114_VOC/n2/weights/last.pt")
 =======
@@ -12,10 +13,14 @@ model = YOLO("yolo113n.yaml")
 # model = YOLO("yolo114n.yaml")
 model = YOLO("runs/yolo114_VOC/n2/weights/last.pt")
 >>>>>>> 52fe3ad13 (测试特征融合模块)
+=======
+model = YOLO("yolo114n.yaml")
+# model = YOLO("runs/yolo114_VOC/n2/weights/last.pt")
+>>>>>>> 414ecd021 (测试DCNV4)
 
 # Train the model
 train_results = model.train(
-    resume=True,
+    # resume=True,
     data="VOC.yaml",  # path to dataset YAML
     # data="DUO.yaml",
     # data="Brackish.yaml", # 这个数据集需要将下面几个数据增强注释掉
@@ -24,6 +29,9 @@ train_results = model.train(
     # data="coco8.yaml",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 414ecd021 (测试DCNV4)
     # data="TT100K-2016.yaml",
     epochs=500,  # number of training epochs
 =======
