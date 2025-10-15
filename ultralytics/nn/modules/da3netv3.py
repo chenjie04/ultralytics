@@ -30,6 +30,10 @@ class EfficientMultiHeadAttention(nn.Module):
     def forward(self, x: torch.Tensor):
         batch_size, seq_len = x.size(0), x.size(1)
         
+        # 确保输入张量与模型参数的数据类型一致
+        if x.dtype != self.qkv_proj.weight.dtype:
+            x = x.to(self.qkv_proj.weight.dtype)
+        
         # 一次性计算Q、K、V
         qkv = self.qkv_proj(x)  # [batch_size, seq_len, hidden_dim]
         q, k, v = qkv[:, :, :self.d_k], qkv[:, :, self.d_k:self.d_k*2], qkv[:, :, -self.d_v:]
