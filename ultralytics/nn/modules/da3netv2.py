@@ -275,16 +275,6 @@ class ChannelPool(nn.Module):
     def forward(self, x):
         return torch.cat( (torch.max(x,1)[0].unsqueeze(1), torch.mean(x,1).unsqueeze(1)), dim=1 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-# v1.0
->>>>>>> df3b7fa0f (开发DA3NetV2)
-=======
->>>>>>> 52fe3ad13 (测试特征融合模块)
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
 class AdaConcat(nn.Module):
     """
     Concatenate a list of tensors along specified dimension in a adaptive manner.
@@ -294,19 +284,7 @@ class AdaConcat(nn.Module):
     """
 
     def __init__(
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         self, channels: list = [512, 256], reduction: int = 8, dimension: int = 1
-=======
-        self, channels: list = [512, 256], reduction: int = 4, kernel_size: int=3, dimension: int = 1
->>>>>>> df3b7fa0f (开发DA3NetV2)
-=======
-        self, channels: list = [512, 256], reduction: int = 8, dimension: int = 1
->>>>>>> 52fe3ad13 (测试特征融合模块)
-=======
-        self, channels: list = [512, 256], reduction: int = 8, dimension: int = 1
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
     ):
         """
         Initialize Concat module.
@@ -319,11 +297,6 @@ class AdaConcat(nn.Module):
         super().__init__()
         self.channels = channels
         self.reduction = reduction
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
         self.d = dimension
 
         total_chs = sum(self.channels)
@@ -358,52 +331,6 @@ class AdaConcat(nn.Module):
         self.spatial_attn_max = nn.Sequential(
             nn.Conv2d(4, 2, kernel_size=3, padding=1, bias=True),
             nn.Hardsigmoid(),
-<<<<<<< HEAD
-=======
-        self.kernel_size = kernel_size
-=======
->>>>>>> 52fe3ad13 (测试特征融合模块)
-        self.d = dimension
-
-        total_chs = sum(self.channels)
-        self.channels_mixing = nn.ModuleList(
-            [
-                nn.Sequential(
-                    nn.Conv2d(
-                        self.channels[i],
-                        self.channels[i] // self.reduction,
-                        1,
-                        bias=True,
-                    ),
-                    nn.SiLU(inplace=True),
-                    nn.Conv2d(
-                        self.channels[i] // self.reduction,
-                        self.channels[i],
-                        1,
-                        bias=True,
-                    ),
-                )
-                for i in range(len(self.channels))
-            ]
-        )
-        self.channel_attn_max = nn.Sequential(
-            nn.Conv2d(total_chs, total_chs // self.reduction, 1, bias=True),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(total_chs // self.reduction, total_chs, 1, bias=True),
-            nn.Hardsigmoid(),
-        )
-
-        self.channel_pool = ChannelPool()
-        self.spatial_attn_max = nn.Sequential(
-<<<<<<< HEAD
-            Conv(4, 2, k=self.kernel_size, act=nn.Sigmoid()),
->>>>>>> df3b7fa0f (开发DA3NetV2)
-=======
-            nn.Conv2d(4, 2, kernel_size=3, padding=1, bias=True),
-            nn.Hardsigmoid(),
->>>>>>> 52fe3ad13 (测试特征融合模块)
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
         )
 
     def forward(self, x: list[torch.Tensor]):
@@ -418,13 +345,6 @@ class AdaConcat(nn.Module):
         """
         channel_max_pool = torch.cat(
             [
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 52fe3ad13 (测试特征融合模块)
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
                 self.channels_mixing[i](
                     F.max_pool2d(
                         x[i],
@@ -437,18 +357,6 @@ class AdaConcat(nn.Module):
                         (x[i].size(2), x[i].size(3)),
                         stride=(x[i].size(2), x[i].size(3)),
                     )
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-                F.max_pool2d(
-                    x[i],
-                    (x[i].size(2), x[i].size(3)),
-                    stride=(x[i].size(2), x[i].size(3)),
->>>>>>> df3b7fa0f (开发DA3NetV2)
-=======
->>>>>>> 52fe3ad13 (测试特征融合模块)
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
                 )
                 for i in range(len(x))
             ],
@@ -459,11 +367,6 @@ class AdaConcat(nn.Module):
         a1, a2 = torch.split(channel_att_max, self.channels, dim=1)
 
         spatial_max = torch.cat(
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
             [self.channel_pool(x[i]) for i in range(len(x))],
             dim=1,
         )
@@ -474,30 +377,5 @@ class AdaConcat(nn.Module):
         out = torch.cat(
             [x[0] * torch.sigmoid(a1 * s1), x[1] * torch.sigmoid(a2 * s2)], dim=self.d
         )
-<<<<<<< HEAD
-=======
-            [
-                self.channel_pool(x[i])
-                for i in range(len(x))
-            ],
-=======
-            [self.channel_pool(x[i]) for i in range(len(x))],
->>>>>>> 52fe3ad13 (测试特征融合模块)
-            dim=1,
-        )
-
-<<<<<<< HEAD
-        out = torch.cat([x[0] * torch.sigmoid(a1*s1), x[1] * torch.sigmoid(a2*s2)], dim=self.d)
->>>>>>> df3b7fa0f (开发DA3NetV2)
-=======
-        spatial_att_max = self.spatial_attn_max(spatial_max)
-        s1, s2 = torch.split(spatial_att_max, [1, 1], dim=1)
-
-        out = torch.cat(
-            [x[0] * torch.sigmoid(a1 * s1), x[1] * torch.sigmoid(a2 * s2)], dim=self.d
-        )
->>>>>>> 52fe3ad13 (测试特征融合模块)
-=======
->>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
 
         return out

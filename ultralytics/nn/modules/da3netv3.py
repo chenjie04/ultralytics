@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from .conv import Conv
 from .da3netv2 import ELANBlock
 
+# 效果比我们提出的双轴聚合注意力差太多，可能是数量不够？
 class EfficientMultiHeadAttention(nn.Module):
     """更高效的多头注意力实现，使用单个大矩阵"""
     
