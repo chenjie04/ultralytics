@@ -1,7 +1,7 @@
 
 from ultralytics import YOLO
 
-model = YOLO("yolo114n.yaml")
+model = YOLO("yolo115n.yaml")
 print(model)
 
 model.info(detailed=False)

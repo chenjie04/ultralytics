@@ -104,6 +104,7 @@ from .transformer import (
 
 from .da3net import DA3Block
 from .da3netv2 import DA3Block_v2, AdaConcat
+from .da3netv3 import DA3Block_v3
 
 __all__ = (
     "Conv",
@@ -185,4 +186,5 @@ __all__ = (
     "DA3Block",
     "DA3Block_v2",
     "AdaConcat",
+    "DA3Block_v3",
 )
