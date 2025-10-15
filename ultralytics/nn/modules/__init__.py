@@ -105,9 +105,13 @@ from .transformer import (
 from .da3net import DA3Block
 from .da3netv2 import DA3Block_v2, AdaConcat
 <<<<<<< HEAD
+<<<<<<< HEAD
 from .da3netv3 import DA3Block_v3
 =======
 >>>>>>> df3b7fa0f (开发DA3NetV2)
+=======
+from .da3netv3 import DA3Block_v3
+>>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
 
 __all__ = (
     "Conv",
@@ -190,7 +194,11 @@ __all__ = (
     "DA3Block_v2",
     "AdaConcat",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "DA3Block_v3",
 =======
 >>>>>>> df3b7fa0f (开发DA3NetV2)
+=======
+    "DA3Block_v3",
+>>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
 )

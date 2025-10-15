@@ -29,6 +29,7 @@ head:
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   - [[-1, 6], 1, AdaConcat, [8, 1]] # cat backbone P4
 =======
   - [[-1, 6], 1, AdaConcat, [8, 5, 1]] # cat backbone P4
@@ -36,10 +37,14 @@ head:
 =======
   - [[-1, 6], 1, AdaConcat, [8, 1]] # cat backbone P4
 >>>>>>> 52fe3ad13 (测试特征融合模块)
+=======
+  - [[-1, 6], 1, AdaConcat, [8, 1]] # cat backbone P4
+>>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
   # - [[-1, 6], 1, Concat, [1]]
   - [-1, 2, C3k2, [512, False]] # 13
 
   - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   - [[-1, 4], 1, AdaConcat, [8, 1]] # cat backbone P3
@@ -49,10 +54,14 @@ head:
 =======
   - [[-1, 4], 1, AdaConcat, [8, 1]] # cat backbone P3
 >>>>>>> 52fe3ad13 (测试特征融合模块)
+=======
+  - [[-1, 4], 1, AdaConcat, [8, 1]] # cat backbone P3
+>>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
   # - [[-1, 4], 1, Concat, [1]]
   - [-1, 2, C3k2, [256, False]] # 16 (P3/8-small)
 
   - [-1, 1, Conv, [256, 3, 2]]
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   - [[-1, 13], 1, AdaConcat, [8, 1]] # cat head P4
@@ -62,10 +71,14 @@ head:
 =======
   - [[-1, 13], 1, AdaConcat, [8, 1]] # cat head P4
 >>>>>>> 52fe3ad13 (测试特征融合模块)
+=======
+  - [[-1, 13], 1, AdaConcat, [8, 1]] # cat head P4
+>>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
   # - [[-1, 13], 1, Concat, [1]]
   - [-1, 2, C3k2, [512, False]] # 19 (P4/16-medium)
 
   - [-1, 1, Conv, [512, 3, 2]]
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   - [[-1, 10], 1, AdaConcat, [16, 1]] # cat head P5
@@ -75,6 +88,9 @@ head:
 =======
   - [[-1, 10], 1, AdaConcat, [16, 1]] # cat head P5
 >>>>>>> 52fe3ad13 (测试特征融合模块)
+=======
+  - [[-1, 10], 1, AdaConcat, [16, 1]] # cat head P5
+>>>>>>> 678ab6767c6eb99f54b72ea8b70722de64dc00c5
   # - [[-1, 10], 1, Concat, [1]]
   - [-1, 2, C3k2, [1024, True]] # 22 (P5/32-large)
 
