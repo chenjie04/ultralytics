@@ -65,6 +65,7 @@ def speed_test(func, args, inputs, name='Unknown'):
         o = func(*inputs)
         torch.cuda.synchronize()
     toc.record()
+    torch.cuda.synchronize()  # 确保toc事件完成
 
     avg_time = tic.elapsed_time(toc) / args.test_num
     print(
@@ -95,9 +96,11 @@ def check_forward_equal_with_pytorch_half():
         offset,
         mask,
         Kh, Kw, stride, stride, Kh // 2, Kw // 2, dilation, dilation, M, D, offset_scale,
-        im2col_step, remove_center,
+        im2col_step
     ]
     output_pytorch = DCNv3Function.apply(*dcnv3_args)
+    assert output_pytorch is not None, "DCNv3Function.apply returned None"
+    output_pytorch = output_pytorch.detach().clone()  # 确保是tensor类型
 
     input1 = input.detach()
 
@@ -109,9 +112,11 @@ def check_forward_equal_with_pytorch_half():
     dcnv4_args = [
         input1, pad(offset_mask),
         Kh, Kw, stride, stride, Kh // 2, Kw // 2, dilation, dilation, M, D, offset_scale,
-        im2col_step, remove_center, 8, 512, 2, 256, True, True,
+        im2col_step, remove_center#, 8, 512, 2, 256, True, True,
     ]
     output_flash_cuda = DCNv4Function.apply(*dcnv4_args)
+    assert output_flash_cuda is not None, "DCNv4Function.apply returned None"
+    output_flash_cuda = output_flash_cuda.detach().clone()  # 确保是tensor类型
 
     fwdok = torch.allclose(output_flash_cuda, output_pytorch, rtol=1e-2, atol=1e-3)
     max_abs_err = (output_flash_cuda - output_pytorch).abs().max()
@@ -131,8 +136,10 @@ def check_forward_equal_with_pytorch_half():
     results[0]['dcnv3_time'] = exp_time_dcnv3
     results[0]['dcnv4_time'] = exp_time_dcnv4
     columns = list(results[0].keys())
-
-    outputs = pd.DataFrame(results, columns=columns)
+    if columns:  # 确保列名列表不为空
+        outputs = pd.DataFrame(results, columns=columns)  # type: ignore
+    else:
+        outputs = pd.DataFrame(results)
     with pd.option_context(
         'display.max_rows', None, 'display.max_columns', None,
         'display.max_colwidth', None, 'display.width', None,
