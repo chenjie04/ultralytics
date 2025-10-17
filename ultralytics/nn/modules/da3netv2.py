@@ -6,34 +6,26 @@ import torch.nn.functional as F
 from ultralytics.nn.modules.conv import Conv
 
 
-class SCDown_v2(nn.Module):
-
-    def __init__(self, c1: int, c2: int, k: int, s: int):
-        """
-        Initialize SCDown module.
-
-        Args:
-            c1 (int): Input channels.
-            c2 (int): Output channels.
-            k (int): Kernel size.
-            s (int): Stride.
-        """
+class ShuffleDown(nn.Module):
+    def __init__(self, c1, c2, k=3, s=2):
         super().__init__()
-        self.cv1 = Conv(c1, c2, 1, 1)
-        self.cv2 = Conv(c2, c2, k=k, s=s, g=c2, act=True)
-        self.cv3 = Conv(c2, c2, 1, 1, act=True)
+        iner_channels = int(c2 / 2)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Apply convolution and downsampling to the input tensor.
+        self.branch1 = nn.Sequential(
+            Conv(c1, c1, k=k, s=s, g=c1, act=False),
+            Conv(c1=c1, c2=iner_channels, k=1, act=True),
+        )
+        self.branch2 = nn.Sequential(
+            Conv(c1=c1, c2=iner_channels, k=1, act=True),
+            Conv(c1=iner_channels, c2=iner_channels, k=k, s=s, g=iner_channels, act=False),
+            Conv(c1=iner_channels, c2=iner_channels, k=1, act=True),
+        )
+        
 
-        Args:
-            x (torch.Tensor): Input tensor.
-
-        Returns:
-            (torch.Tensor): Downsampled output tensor.
-        """
-        return self.cv3(self.cv2(self.cv1(x)))
+    def forward(self, x):
+        out = torch.cat((self.branch1(x), self.branch2(x)), dim=1)
+        out = channel_shuffle(out, 2)
+        return out
 
 
 class DualAxisAggAttn_v2(nn.Module):
@@ -284,7 +276,7 @@ class AdaConcat(nn.Module):
     """
 
     def __init__(
-        self, channels: list = [512, 256], reduction: int = 8, dimension: int = 1
+        self, channels: list = [512, 256], reduction: int = 8, kernel_size: int = 3, dimension: int = 1
     ):
         """
         Initialize Concat module.
@@ -329,7 +321,7 @@ class AdaConcat(nn.Module):
 
         self.channel_pool = ChannelPool()
         self.spatial_attn_max = nn.Sequential(
-            nn.Conv2d(4, 2, kernel_size=3, padding=1, bias=True),
+            nn.Conv2d(4, 2, kernel_size=kernel_size, padding=1, bias=True),
             nn.Hardsigmoid(),
         )
 

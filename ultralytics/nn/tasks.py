@@ -71,6 +71,7 @@ from ultralytics.nn.modules import (
     DA3Block,
     DA3Block_v2,
     AdaConcat,
+    ShuffleDown,
     DA3Block_v3,
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, LOGGER, YAML, colorstr, emojis
@@ -1716,6 +1717,11 @@ def parse_model(d, ch, verbose=True):
             c2 = make_divisible(min(c2, max_channels) * width, 8)
             args = [c1, c2, *args[1:]]
         elif m is DA3Block_v3:
+            c2 = args[0]
+            c1 = ch[f]
+            c2 = make_divisible(min(c2, max_channels) * width, 8)
+            args = [c1, c2, *args[1:]]
+        elif m is ShuffleDown:
             c2 = args[0]
             c1 = ch[f]
             c2 = make_divisible(min(c2, max_channels) * width, 8)
