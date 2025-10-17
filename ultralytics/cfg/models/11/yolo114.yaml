@@ -13,13 +13,13 @@ scales: # model compound scaling constants, i.e. 'model=yolo11n.yaml' will call 
 backbone:
   # [from, repeats, module, args]              特征图大小
   - [-1, 1, Conv, [64, 3, 2]] # 0-P1/2         320
-  - [-1, 1, ShuffleDown, [128, 3, 2]] # 1-P2/4        160
+  - [-1, 1, SCDown, [128, 3, 2]] # 1-P2/4        160
   - [-1, 2, DA3Block_v2, [128, 1]]
-  - [-1, 1, ShuffleDown, [256, 3, 2]] # 3-P3/8        80
+  - [-1, 1, SCDown, [256, 3, 2]] # 3-P3/8        80
   - [-1, 2, DA3Block_v2, [256, 2]]
-  - [-1, 1, ShuffleDown, [512, 3, 2]] # 5-P4/16     40
+  - [-1, 1, SCDown, [512, 3, 2]] # 5-P4/16     40
   - [-1, 2, DA3Block_v2, [512, 4]]
-  - [-1, 1, ShuffleDown, [1024, 3, 2]] # 7-P5/32    20
+  - [-1, 1, SCDown, [1024, 3, 2]] # 7-P5/32    20
   - [-1, 2, DA3Block_v2, [1024, 8]]
   - [-1, 1, SPPF, [1024, 5]] # 9
   - [-1, 2, C2PSA, [1024]] # 10
