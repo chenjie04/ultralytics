@@ -5,6 +5,31 @@ import torch.nn as nn
 import torch.nn.functional as F
 from ultralytics.nn.modules.conv import Conv
 
+class ShuffleDown(nn.Module):
+    def __init__(self, c1, c2, k=3, s=2):
+        super().__init__()
+
+        iner_c = int(c2 / 2)
+
+        self.branch1 = nn.Sequential(
+            Conv(c1=c1, c2=c1, k=k, s=s, g=c1, act=False),
+            Conv(c1=c1, c2=iner_c, k=1, act=True),
+        )
+
+        self.branch2 = nn.Sequential(
+            Conv(c1=c1, c2=c1, k=1, s=1, act=True),
+            Conv(c1=c1, c2=c1, k=k, s=s, g=c1, act=False),
+            Conv(c1=c1, c2=iner_c, k=1, act=True),
+        )
+
+    def forward(self, x):
+        x1 = self.branch1(x)
+        x2 = self.branch2(x)
+        out = torch.cat([x1, x2], dim=1)
+        out = channel_shuffle(out, 2)
+        return out
+
+
 class DualAxisAggAttn_v2(nn.Module):
     def __init__(
         self,
